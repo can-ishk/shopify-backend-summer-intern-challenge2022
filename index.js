@@ -1,9 +1,9 @@
 const express = require('express');
+const fs = require('fs')
 
-const app = express();
 const port = 3030;
 
-app.use(express.json());
+const app = express();
 
 //Routes ahead
 
@@ -16,9 +16,15 @@ app.get('/',(req, res)=>{
     }
 } )
 
-
-
-
+app.get ('/shop', (req,res)=>{
+    try{
+        fs.readFile(__dirname + '/store/' + 'stock.json', 'utf8', (err, data) => {
+            res.send(data);
+        });
+    }catch(err){
+        console.log(err.message)
+    }
+})
 
 //Server listener ahead
 
