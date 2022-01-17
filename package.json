@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "express": "^4.17.2",
+    "nodemon": "^2.0.15"
+  },
+  "name": "shopify-backend-project",
+  "version": "1.0.0",
+  "description": "Hi! I'm Kanishk and this is my submission for the Shopify Backend Summer Intern Challenge 2022.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "can-ishk",
+  "license": "ISC"
+}
