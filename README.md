@@ -1,1 +1,0 @@
-# shopify-backend-summer-intern-challenge2022
