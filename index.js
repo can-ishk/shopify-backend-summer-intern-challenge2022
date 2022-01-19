@@ -10,25 +10,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 //Routes ahead
 
-//stock = []
-stock = [
-    {
-        "name": "ka",
-        "cost": "4",
-        "quantity": "3"
-    },
-    {
-        "name": "ab",
-        "cost": "3",
-        "quantity": "7"
-    },
-    {
-        "name": "cd",
-        "cost": "3",
-        "quantity": "6"
-    }
-]
+//stock array represents memory/database for storage
+stock = [] 
+/*
+item objecct format: 
+{
+    prodId: Unique, primary key, Alphanumeric String.
+    name: string
+    cost: string
+    quantity: string
+    discount: string
+    ... etc
+}
+*/
 
+//Route to test if server is online.
 app.get('/',(req, res)=>{
     try{
         res.send('Welcome');
@@ -38,6 +34,8 @@ app.get('/',(req, res)=>{
     }
 } )
 
+
+//Returns  items in stock.
 app.get ('/shop', (req,res)=>{
     try{
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -48,10 +46,12 @@ app.get ('/shop', (req,res)=>{
     }
 })
 
+
+//Adds item to stock.
 app.post('/shop/add', (req,res)=>{
     try{
         const item = req.body;
-        const search = stock.filter((i)=> {return i.name == item.name})
+        const search = stock.filter((i)=> {return i.prodId == item.prodId})
         if(search.length>0){
             res.status(406) //Not Acceptable
             console.log()
@@ -69,12 +69,13 @@ app.post('/shop/add', (req,res)=>{
     }
 })
 
+//Edit an existing item.
 app.put('/shop/edit', (req,res)=>{
     try{
         const item = req.body;
-        const search = stock.filter((i)=> {return i.name == item.currName})
+        const search = stock.filter((i)=> {return i.prodId == item.prodId})
         if(search.length>0){
-            i = stock.findIndex(it=>it.name==item.currName)
+            i = stock.findIndex(it=>it.prodId==item.prodId)
             if(item.name) stock[i].name = item.name 
             if(item.cost) stock[i].cost = item.cost
             if(item.quantity) stock[i].quantity = item.quantity
@@ -93,12 +94,14 @@ app.put('/shop/edit', (req,res)=>{
         console.log(err.message)
     }
 })
+
+//Delete an item's record.
 app.delete('/shop/delete', (req,res)=>{
     try{
         const item = req.body;
-        const search = stock.filter((i)=> {return i.name == item.name})
+        const search = stock.filter((i)=> {return i.prodId == item.prodId})
         if(search.length>0){
-            i = stock.findIndex(it=>it.name==item.name)
+            i = stock.findIndex(it=>it.prodId==item.prodId)
             stock.splice(i,1)
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.write(JSON.stringify(stock));
@@ -115,12 +118,14 @@ app.delete('/shop/delete', (req,res)=>{
     }
 })
 
+//Generate and download a csv file of the entire stock.
 app.get('/shop/csv', async(req,res)=>{
     const generatedCsv = new objectsToCsv(stock)
     console.log(generatedCsv)
     await generatedCsv.toDisk('./temp.csv')
     res.download('/temp.csv','generatedCSV.csv')
-    res.sendStatus(200)
+    res.status(200)
+    res.send(generatedCsv)
     res.end()   
 })
 
