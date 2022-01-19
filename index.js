@@ -39,8 +39,8 @@ app.get('/',(req, res)=>{
 app.get ('/shop', (req,res)=>{
     try{
         res.writeHead(200, { 'Content-Type': 'application/json' });
-res.write(JSON.stringify(stock));
-res.end();
+        res.write(JSON.stringify(stock));
+        res.end();
     }catch(err){
         console.log(err.message)
     }
@@ -57,7 +57,9 @@ app.post('/shop/add', (req,res)=>{
         }
         else{
             stock.push(item)
-            res.send(stock);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify(stock));
+            res.end();
         }
     }
     catch(err){
@@ -82,7 +84,27 @@ app.put('/shop/edit', (req,res)=>{
             res.status(406) //Not Acceptable
             console.log()
             res.end("Bad Request: Item doesn't exist. Please use 'add' instead of 'edit'")
+        }
 
+    }
+    catch(err){
+        console.log(err.message)
+    }
+})
+app.delete('/shop/delete', (req,res)=>{
+    try{
+        const item = req.body;
+        const search = stock.filter((i)=> {return i.name == item.name})
+        if(search.length>0){
+            i = stock.findIndex(it=>it.name==item.name)
+            stock.splice(i,1)
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify(stock));
+            res.end();
+        }
+        else{
+            res.status(406) //Not Acceptable
+            res.end("Bad Request: Item doesn't exist.")
         }
 
     }
@@ -94,5 +116,5 @@ app.put('/shop/edit', (req,res)=>{
 //Server listener ahead
 
 app.listen(port, ()=>{
-    console.log('Shop is now active, listening on port '+port)
+    console.log('Shop is now active, listening on port ' + port)
 })
