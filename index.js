@@ -1,7 +1,9 @@
 const express = require('express');
 const fs = require('fs')
 const bodyParser = require('body-parser')
+const objectsToCsv = require('objects-to-csv')
 const port = 3030;
+
 
 const app = express();
 app.use(express.json());
@@ -112,6 +114,16 @@ app.delete('/shop/delete', (req,res)=>{
         console.log(err.message)
     }
 })
+
+app.get('/shop/csv', async(req,res)=>{
+    const generatedCsv = new objectsToCsv(stock)
+    console.log(generatedCsv)
+    await generatedCsv.toDisk('./temp.csv')
+    res.download('/temp.csv','generatedCSV.csv')
+    res.sendStatus(200)
+    res.end()   
+})
+
 
 //Server listener ahead
 
